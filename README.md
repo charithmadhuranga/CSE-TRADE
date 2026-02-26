@@ -32,7 +32,7 @@ Ensure you have **Python 3.10+** and `uv` installed.
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-username/CSE-TRADE.git
+   git clone https://github.com/charithmadhuranga/CSE-TRADE.git
    cd CSE-TRADE
    ```
 
