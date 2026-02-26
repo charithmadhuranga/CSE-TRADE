@@ -2,7 +2,8 @@
 
 **CSE-TRADE** is a premium, high-performance desktop application for monitoring and analyzing stocks on the Colombo Stock Exchange (CSE). Built with Python and PySide6, it provides a stable, offline-first experience with real-time data synchronization and interactive charting.
 
-![CSE-TRADE Dashboard Preview](https://raw.githubusercontent.com/charithmadhuranga/CSE-TRADE/66867a2fae913e7d76756daa589d03379e13e7cf/dashboard.png)
+![CSE-TRADE Dashboard Preview1](https://raw.githubusercontent.com/charithmadhuranga/CSE-TRADE/refs/heads/master/dashboard1.png)
+![CSE-TRADE Dashboard Preview](https://raw.githubusercontent.com/charithmadhuranga/CSE-TRADE/refs/heads/master/dashboard.png)
 
 ## 🚀 Key Features
 
