@@ -27,6 +27,15 @@ class DataStore:
                     updated_at TIMESTAMP
                 )
             """)
+            # Table for chat history
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS chat_history (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    role TEXT,
+                    content TEXT,
+                    timestamp TIMESTAMP
+                )
+            """)
             conn.commit()
 
     def set_kv(self, key, value):
@@ -47,6 +56,68 @@ class DataStore:
                 return json.loads(row[0]) if row else None
         except:
             return None
+
+    def save_chat_history(self, messages):
+        """Save chat messages to the database."""
+        if not messages:
+            return
+        
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            # We clear and re-save the whole history for simplicity in this version,
+            # or we could just append new ones. Let's do a simple append-only logic
+            # but we need to know what's already there to avoid duplicates.
+            # For simplicity, let's just clear and re-save the whole session history.
+            cursor.execute("DELETE FROM chat_history")
+            
+            for msg in messages:
+                from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
+                
+                role = "unknown"
+                if isinstance(msg, HumanMessage):
+                    role = "user"
+                elif isinstance(msg, AIMessage):
+                    role = "assistant"
+                elif isinstance(msg, SystemMessage):
+                    role = "system"
+                
+                content = msg.content if hasattr(msg, 'content') else str(msg)
+                
+                cursor.execute(
+                    "INSERT INTO chat_history (role, content, timestamp) VALUES (?, ?, ?)",
+                    (role, content, datetime.now().isoformat())
+                )
+            conn.commit()
+
+    def get_chat_history(self):
+        """Retrieve chat messages from the database."""
+        try:
+            with sqlite3.connect(self.db_path) as conn:
+                cursor = conn.cursor()
+                cursor.execute("SELECT role, content FROM chat_history ORDER BY id ASC")
+                rows = cursor.fetchall()
+                
+                from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
+                
+                messages = []
+                for role, content in rows:
+                    if role == "user":
+                        messages.append(HumanMessage(content=content))
+                    elif role == "assistant":
+                        messages.append(AIMessage(content=content))
+                    elif role == "system":
+                        messages.append(SystemMessage(content=content))
+                return messages
+        except Exception as e:
+            logging.error(f"Error loading chat history: {e}")
+            return []
+
+    def clear_chat_history(self):
+        """Delete all messages from chat history."""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM chat_history")
+            conn.commit()
 
     def save_stock_summaries(self, stock_list):
         if not stock_list: return

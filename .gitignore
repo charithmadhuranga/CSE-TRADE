@@ -12,4 +12,7 @@ wheels/
 
 # Local data / Cache
 *.db
-cse_trade_cache.db
+cse_trade_*.db
+
+# Environment variables
+.env
